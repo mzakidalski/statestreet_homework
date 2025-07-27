@@ -1,4 +1,7 @@
 
+###
+### USERS
+
 ### Retrieve all users
 GET http://{{host}}/v1/users
 
@@ -37,3 +40,48 @@ Content-Type: application/json
 
 ### Delete user
 DELETE http://{{host}}/v1/users/4
+
+###
+### CARS
+
+### Retrieve all cars
+GET http://{{host}}/v1/cars
+
+### Retrieve 2-nd page (size=2) of users
+GET http://{{host}}/v1/cars?
+    sort=id&
+    order=asc&
+    pageNumber=1&
+    numOfRecords=2
+
+### Retrieve car with given id
+GET http://{{host}}/v1/cars/7
+
+### Insert car
+POST http://{{host}}/v1/cars
+Accept: application/json, application/*+json
+Content-Type: application/json
+
+{
+  "id": 1003,
+  "type": "SEDAN",
+  "model": "Mustang",
+  "make": "Ford"
+}
+
+
+### Update car
+PUT http://{{host}}/v1/cars
+Accept: application/json, application/*+json
+Content-Type: application/json
+
+{
+  "id": 7,
+  "type": "SEDAN",
+  "model": "Mustang updated",
+  "make": "Ford updated"
+}
+
+
+### Delete given car
+DELETE http://{{host}}/v1/cars/7

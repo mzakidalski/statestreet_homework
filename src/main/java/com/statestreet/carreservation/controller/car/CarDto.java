@@ -1,4 +1,4 @@
-package com.statestreet.carreservation.service.car;
+package com.statestreet.carreservation.controller.car;
 
 import com.statestreet.carreservation.repository.common.CarType;
 import lombok.AllArgsConstructor;

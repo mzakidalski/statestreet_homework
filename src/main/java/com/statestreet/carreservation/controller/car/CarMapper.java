@@ -1,4 +1,4 @@
-package com.statestreet.carreservation.service.car;
+package com.statestreet.carreservation.controller.car;
 
 import com.statestreet.carreservation.repository.car.Car;
 import org.springframework.stereotype.Component;
