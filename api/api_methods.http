@@ -85,3 +85,9 @@ Content-Type: application/json
 
 ### Delete given car
 DELETE http://{{host}}/v1/cars/7
+
+###
+### RESERVATIONS
+
+## Get reservations for user
+GET http://{{host}}/v1/reservations/user/3
