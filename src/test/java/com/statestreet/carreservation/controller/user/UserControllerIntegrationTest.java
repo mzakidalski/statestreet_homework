@@ -34,7 +34,7 @@ class UserControllerIntegrationTest {
     private static final String URL_WITH_ID = URL + "/{id}";
 
     @Test
-    void getAllUsersWorksCorrectly() {
+    void retrieveAllUsersWorksCorrectly() {
 
         ResponseEntity<UserDto[]> response = restTemplate.getForEntity(URL, UserDto[].class, port);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -112,6 +112,33 @@ class UserControllerIntegrationTest {
         assertThat(updated)
                 .usingRecursiveComparison()
                 .isEqualTo(userForUpdate);
+    }
+
+    @Test
+    void deleteUserWorksCorrectly() {
+        ResponseEntity<UserDto> userTwo = restTemplate.getForEntity(
+                URL_WITH_ID,
+                UserDto.class,
+                Map.of("port", port, "id", 2)
+        );
+        assertThat(userTwo.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        ResponseEntity<Void> userTwoDeleteResponse = restTemplate.exchange(
+                URL_WITH_ID,
+                HttpMethod.DELETE,
+                null,
+                Void.class,
+                Map.of("port", port, "id", 2)
+        );
+        assertThat(userTwoDeleteResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+
+        ResponseEntity<UserDto> userTwoDeletedResponse = restTemplate.getForEntity(
+                URL_WITH_ID,
+                UserDto.class,
+                Map.of("port", port, "id", 2)
+        );
+        assertThat(userTwoDeletedResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     private void assertOperationSucceeded(UserDto created, HttpStatusCode code) {

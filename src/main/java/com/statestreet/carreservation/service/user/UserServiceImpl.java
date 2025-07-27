@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
 
     public User getById(int id) {
         if (!repository.existsById(id)) {
-            throw new RuntimeException(getErrorMessage(id));
+            throw new UserNotFoundException(id);
         }
         return repository.getReferenceById(id);
     }
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> foundUser = repository.findById(id);
 
         if(foundUser.isEmpty())
-            throw new RuntimeException(getErrorMessage(id));
+            throw new UserNotFoundException(id);
 
         repository.delete(foundUser.get());
         return "User with id "+ id +" deleted";
