@@ -1,7 +1,0 @@
-### GET request to example server
-GET http://localhost:8080/v1/users/2
-
-###
-GET http://localhost:8080/v1/users/2
-
-###

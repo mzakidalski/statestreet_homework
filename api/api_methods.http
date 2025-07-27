@@ -1,0 +1,39 @@
+
+### Retrieve all users
+GET http://{{host}}/v1/users
+
+### Retrieve 2-nd page (size=2) of users
+GET http://{{host}}/v1/users?
+    sort=id&
+    order=asc&
+    pageNumber=1&
+    numOfRecords=2
+
+### Retrieve single user
+GET http://{{host}}/v1/users/3
+
+### Insert user
+POST http://{{host}}/v1/users
+Accept: application/json, application/*+json
+Content-Type: application/json
+
+{
+  "id": 1003,
+  "name": "Carlos Updated",
+  "surname": "Gonzalez"
+}
+
+### Update user
+PUT http://{{host}}/v1/users
+Accept: application/json, application/*+json
+Content-Type: application/json
+
+{
+  "id": 3,
+  "name": "Carlos UPDATE",
+  "surname": "Gonzalez UPDATED"
+}
+
+
+### Delete user
+DELETE http://{{host}}/v1/users/4
