@@ -1,5 +1,6 @@
 package com.statestreet.carreservation.controller.user;
 
+import com.statestreet.carreservation.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,11 +16,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {
-                "spring.jpa.hibernate.ddl-auto=create",
-                "spring.jpa.defer-datasource-initialization=true"
-        }
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @Sql(scripts = "/test_data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class UserControllerIntegrationTest {
@@ -65,7 +62,7 @@ class UserControllerIntegrationTest {
         );
 
         UserDto created = postResponse.getBody();
-        assertOperationSucceeded(created, postResponse.getStatusCode());
+        TestUtils.assertOperationSucceeded(created, postResponse.getStatusCode());
 
 
         ResponseEntity<UserDto> retrieveResponse = restTemplate.getForEntity(
@@ -74,7 +71,7 @@ class UserControllerIntegrationTest {
                 Map.of("port", port, "id", created.getId())
         );
         UserDto fetched = retrieveResponse.getBody();
-        assertOperationSucceeded(fetched, postResponse.getStatusCode());
+        TestUtils.assertOperationSucceeded(fetched, postResponse.getStatusCode());
 
 
         assertThat(fetched).usingRecursiveComparison().isEqualTo(created);
@@ -89,7 +86,7 @@ class UserControllerIntegrationTest {
         );
 
         UserDto userForUpdate = retrieveResponse.getBody();
-        assertOperationSucceeded(userForUpdate, retrieveResponse.getStatusCode());
+        TestUtils.assertOperationSucceeded(userForUpdate, retrieveResponse.getStatusCode());
 
         userForUpdate.setName("Jonathan");
         userForUpdate.setSurname("Doe‑Smith");
@@ -107,7 +104,7 @@ class UserControllerIntegrationTest {
         );
 
         UserDto updated = updateResponse.getBody();
-        assertOperationSucceeded(updated, updateResponse.getStatusCode());
+        TestUtils.assertOperationSucceeded(updated, updateResponse.getStatusCode());
 
         assertThat(updated)
                 .usingRecursiveComparison()
@@ -141,9 +138,5 @@ class UserControllerIntegrationTest {
         assertThat(userTwoDeletedResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
-    private void assertOperationSucceeded(UserDto created, HttpStatusCode code) {
-        assertThat(created).isNotNull();
-        assertThat(created.getId()).isNotNull();
-        assertThat(code).isEqualTo(HttpStatus.OK);
-    }
+
 }
