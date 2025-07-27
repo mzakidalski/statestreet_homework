@@ -9,9 +9,6 @@ import java.util.stream.Collectors;
 @Component
 public class UserMapper {
 
-    /**
-     * Convert entity to DTO
-     */
     public UserDto toDto(User user) {
         if (user == null) {
             return null;
@@ -23,9 +20,6 @@ public class UserMapper {
         );
     }
 
-    /**
-     * Convert DTO to entity
-     */
     public User toEntity(UserDto dto) {
         if (dto == null) {
             return null;
@@ -37,18 +31,12 @@ public class UserMapper {
         return user;
     }
 
-    /**
-     * Convert a list of entities to a list of DTOs
-     */
     public List<UserDto> toDtoList(List<User> users) {
         return users == null ? null : users.stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Convert a list of DTOs to a list of entities
-     */
     public List<User> toEntityList(List<UserDto> dtos) {
         return dtos == null ? null : dtos.stream()
                 .map(this::toEntity)

@@ -1,6 +1,5 @@
 package com.statestreet.carreservation.controller.user;
 
-import com.statestreet.carreservation.repository.user.User;
 import com.statestreet.carreservation.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
