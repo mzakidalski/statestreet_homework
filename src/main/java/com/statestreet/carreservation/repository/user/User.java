@@ -3,7 +3,7 @@ package com.statestreet.carreservation.repository.user;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "CAR_USER")
+@Table(name = "RESERVATION_USER")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

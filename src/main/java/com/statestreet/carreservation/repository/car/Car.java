@@ -1,6 +1,6 @@
 package com.statestreet.carreservation.repository.car;
 
-import com.statestreet.carreservation.controller.CarType;
+import com.statestreet.carreservation.repository.common.CarType;
 import jakarta.persistence.*;
 
 @Entity
