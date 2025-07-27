@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CarReservationMicroserviceApplication {
+public class CarReservationApp {
 
     public static void main(String[] args) {
-        SpringApplication.run(CarReservationMicroserviceApplication.class, args);
+        SpringApplication.run(CarReservationApp.class, args);
     }
 
 }
