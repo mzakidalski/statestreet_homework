@@ -64,10 +64,8 @@ class UserControllerIntegrationTest {
                 Map.of("port", port)
         );
 
-        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
         UserDto created = postResponse.getBody();
-        assertCorrectlyInserted(created);
+        assertOperationSucceeded(created, postResponse.getStatusCode());
 
 
         ResponseEntity<UserDto> retrieveResponse = restTemplate.getForEntity(
@@ -75,15 +73,50 @@ class UserControllerIntegrationTest {
                 UserDto.class,
                 Map.of("port", port, "id", created.getId())
         );
-        assertThat(retrieveResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
         UserDto fetched = retrieveResponse.getBody();
-        assertThat(fetched).usingRecursiveComparison().isEqualTo(created);
+        assertOperationSucceeded(fetched, postResponse.getStatusCode());
 
+
+        assertThat(fetched).usingRecursiveComparison().isEqualTo(created);
     }
 
-    private void assertCorrectlyInserted(UserDto created) {
+    @Test
+    void updateUserWorksCorrectly() {
+        ResponseEntity<UserDto> retrieveResponse = restTemplate.getForEntity(
+                URL_WITH_ID,
+                UserDto.class,
+                Map.of("port", port, "id", 1)
+        );
+
+        UserDto userForUpdate = retrieveResponse.getBody();
+        assertOperationSucceeded(userForUpdate, retrieveResponse.getStatusCode());
+
+        userForUpdate.setName("Jonathan");
+        userForUpdate.setSurname("Doe‑Smith");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<UserDto> putEntity = new HttpEntity<>(userForUpdate, headers);
+
+        ResponseEntity<UserDto> updateResponse = restTemplate.exchange(
+                URL,
+                HttpMethod.PUT,
+                putEntity,
+                UserDto.class,
+                Map.of("port", port)
+        );
+
+        UserDto updated = updateResponse.getBody();
+        assertOperationSucceeded(updated, updateResponse.getStatusCode());
+
+        assertThat(updated)
+                .usingRecursiveComparison()
+                .isEqualTo(userForUpdate);
+    }
+
+    private void assertOperationSucceeded(UserDto created, HttpStatusCode code) {
         assertThat(created).isNotNull();
         assertThat(created.getId()).isNotNull();
+        assertThat(code).isEqualTo(HttpStatus.OK);
     }
 }
