@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/v1/users")
+@RestController
+@RequestMapping("/v1/users")
 public class UserController {
 
     @Autowired
@@ -23,8 +24,8 @@ public class UserController {
                                pageNumber, numOfRecords);
     }
 
-    @GetMapping("/id")
-    public User getSingleUser(@RequestParam int id) {
+    @GetMapping("/{id}")
+    public User getSingleUser(@PathVariable int id) {
         return service.getById(id);
     }
 
