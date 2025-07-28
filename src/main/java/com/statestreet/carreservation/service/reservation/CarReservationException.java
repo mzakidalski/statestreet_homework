@@ -14,8 +14,4 @@ public class CarReservationException extends RuntimeException {
                 startDate.format(FORMATTER) + " and " + endDate.format(FORMATTER) + ".");
     }
 
-    public CarReservationException(int id) {
-        super("User with id " + id + " not found.");
-    }
-
 }
