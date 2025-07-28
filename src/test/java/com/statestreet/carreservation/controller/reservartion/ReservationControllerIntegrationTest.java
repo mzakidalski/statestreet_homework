@@ -32,14 +32,15 @@ class ReservationControllerIntegrationTest {
     private ReservationRepository reservationRepository;
 
     private static final String URL = "http://localhost:{port}/v1/reservations";
+    private static final int NUM_OF_CARS_OF_EACH_TYPE = 2;
 
     LocalDateTime startDate = LocalDateTime.parse("2025-07-12T12:00:00");
-    ReservatioRequestDto request = new ReservatioRequestDto(1, CarType.SEDAN, startDate, 3);
 
     @Test
-    @DisplayName("allow reservation of a car of a given type at a desired date and time for a given\n" +
+    @DisplayName("Allow reservation of a car of a given type at a desired date and time for a given\n" +
             "number of days")
     void makeSuccessfullyReservation() {
+        ReservatioRequestDto request = new ReservatioRequestDto(1, CarType.SEDAN, startDate, 3);
         var reservationResponse = restTemplate.postForEntity(URL, request, ReservationDto.class,  Map.of("port", port));
 
         assertThat(reservationResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -51,16 +52,22 @@ class ReservationControllerIntegrationTest {
     @Test
     @DisplayName("The number of cars of each type is limited.")
     void limitedNumberOfCars() {
-        int numOfCarsOfEachType = 2;
+
+        ReservatioRequestDto request = new ReservatioRequestDto(1, CarType.SEDAN, startDate, 12);
+
         for (var type : CarType.values()) {
-            request.setCarType(type);
-            for (int i = 0; i <= numOfCarsOfEachType; i++) {
-                var reservationResponse = restTemplate.postForEntity(URL, request, ReservationDto.class,  Map.of("port", port));
-                if (i < numOfCarsOfEachType) {
-                    assertThat(reservationResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-                } else {
-                    assertThat(reservationResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-                }
+            verifyCarsOfTypeLimited(request, type);
+        }
+    }
+
+    private void verifyCarsOfTypeLimited(ReservatioRequestDto request, CarType type) {
+        request.setCarType(type);
+        for (int i = 0; i <= NUM_OF_CARS_OF_EACH_TYPE; i++) {
+            var reservationResponse = restTemplate.postForEntity(URL, request, ReservationDto.class,  Map.of("port", port));
+            if (i < NUM_OF_CARS_OF_EACH_TYPE) {
+                assertThat(reservationResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+            } else {
+                assertThat(reservationResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             }
         }
     }
