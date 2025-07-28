@@ -1,6 +1,7 @@
 package com.statestreet.carreservation.controller;
 
 import com.statestreet.carreservation.service.car.CarNotFoundException;
+import com.statestreet.carreservation.service.reservation.CarReservationException;
 import com.statestreet.carreservation.service.user.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,17 @@ public class ControllerExceptionHandler {
         );
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(error);
+    }
+
+    @ExceptionHandler(CarReservationException.class)
+    public ResponseEntity<ApiError> handleCarReservationException(CarReservationException ex) {
+        ApiError error = new ApiError(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                System.currentTimeMillis());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(error);
     }
 
