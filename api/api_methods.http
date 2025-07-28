@@ -91,3 +91,16 @@ DELETE http://{{host}}/v1/cars/7
 
 ## Get reservations for user
 GET http://{{host}}/v1/reservations/user/3
+
+### Make reservation of particular type for user between dates
+POST  http://{{host}}/v1/reservations
+Accept: application/json, application/*+json
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "carType": "SEDAN",
+  "startTime": "2025-07-01T11:00:00",
+  "numOfDays": 2
+
+}

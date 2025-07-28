@@ -28,4 +28,12 @@ public class ReservationController {
                 .map(reservation -> mapper.toDto(reservation));
         return ResponseEntity.ok(dtoPage);
     }
+
+    @PostMapping
+    public ResponseEntity<ReservationDto> makeReservation(@RequestBody ReservatioRequestDto request) {
+        var endDate = request.getStartTime().plusDays(request.numOfDays);
+        var result = service.makeReservation(request.getUserId(), request.getCarType(),
+                request.getStartTime(), endDate);
+        return ResponseEntity.ok(mapper.toDto(result));
+    }
 }
