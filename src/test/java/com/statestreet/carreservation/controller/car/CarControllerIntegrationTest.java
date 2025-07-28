@@ -1,7 +1,10 @@
 package com.statestreet.carreservation.controller.car;
 
 
+import com.statestreet.carreservation.repository.car.Car;
+import com.statestreet.carreservation.repository.car.CarRepository;
 import com.statestreet.carreservation.repository.common.CarType;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,6 +15,8 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,6 +31,9 @@ class CarControllerIntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    @Autowired
+    private CarRepository carRepository;
 
     private static final String URL = "http://localhost:{port}/v1/cars";
     private static final String URL_WITH_ID = URL + "/{id}";
@@ -139,6 +147,18 @@ class CarControllerIntegrationTest {
         assertThat(dto).isNotNull();
         assertThat(dto.getId()).isNotNull();
         assertThat(status).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    @DisplayName("There are 3 types of cars (Sedan, SUV and van).")
+    void threeTypesOfCarsPresent() {
+
+        assertThat(carRepository.findAll()
+                .stream()
+                .map(car -> car.getType())
+                .collect(Collectors.toSet()))
+                .isEqualTo(Set.of(CarType.SUV, CarType.SEDAN, CarType.VAN));
+
     }
 
 }
