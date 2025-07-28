@@ -33,14 +33,16 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Reservation makeReservation(int userId, CarType type, LocalDateTime startDate, LocalDateTime endDate) {
-       var car = carRepo.findFirstAvailableCarByTypeAndBookingDates(type, startDate, endDate)
+       var car = carRepo.findAvailableCarsByTypeAndBookingDates(type, startDate, endDate)
+               .stream().findFirst()
                .orElseThrow(() -> new CarReservationException(startDate, endDate, type));
        var user = userRepo.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
        Reservation reservation = new Reservation();
-       reservation.setId(0);
        reservation.setUser(user);
        reservation.setCar(car);
+       reservation.setStartTime(startDate);
+       reservation.setEndTime(endDate);
 
        return reservationRepo.save(reservation);
     }

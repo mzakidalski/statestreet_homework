@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface CarRepository extends JpaRepository<Car, Integer> {
@@ -17,12 +17,13 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
            WHERE c.type = :type
            AND NOT EXISTS (
              SELECT r from Reservation r
-             WHERE r.car = c AND 
-                   r.startTime < :endDate AND 
-                   r.endTime < :startDate     
-           )                  
-        """)
-    Optional<Car> findFirstAvailableCarByTypeAndBookingDates(CarType type,
-                                                             LocalDateTime startDate,
-                                                             LocalDateTime endDate);
+             WHERE r.car = c AND
+                   r.startTime < :endDate AND
+                   r.endTime > :startDate    
+           )
+           ORDER BY c.id                         
+       \s""")
+    List<Car> findAvailableCarsByTypeAndBookingDates(CarType type,
+                                                     LocalDateTime startDate,
+                                                     LocalDateTime endDate);
 }
