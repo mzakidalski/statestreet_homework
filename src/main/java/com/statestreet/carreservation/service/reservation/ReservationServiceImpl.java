@@ -6,6 +6,7 @@ import com.statestreet.carreservation.repository.reservation.Reservation;
 import com.statestreet.carreservation.repository.reservation.ReservationRepository;
 import com.statestreet.carreservation.repository.user.UserRepository;
 import com.statestreet.carreservation.service.user.UserNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    @Transactional
     public Reservation makeReservation(int userId, CarType type, LocalDateTime startDate, LocalDateTime endDate) {
        var car = carRepo.findAvailableCarsByTypeAndBookingDates(type, startDate, endDate)
                .stream().findFirst()
