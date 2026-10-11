@@ -104,3 +104,16 @@ Content-Type: application/json
   "numOfDays": 2
 
 }
+
+###
+### NLP
+
+### Make a reservation using natural language
+POST http://{{host}}/nlpReservation
+Accept: application/json, application/*+json
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "text": "Reserve an SUV from 15 October 2026 at 10:00 for 3 days"
+}

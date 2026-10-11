@@ -1,6 +1,7 @@
 package com.statestreet.carreservation.controller;
 
 import com.statestreet.carreservation.service.car.CarNotFoundException;
+import com.statestreet.carreservation.service.nlp.NlpReservationServiceException;
 import com.statestreet.carreservation.service.reservation.CarReservationException;
 import com.statestreet.carreservation.service.user.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -46,6 +47,12 @@ public class ControllerExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(error);
+    }
+
+    @ExceptionHandler(NlpReservationServiceException.class)
+    public ResponseEntity<ApiError> handleNlpReservationServiceException(NlpReservationServiceException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiError(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), System.currentTimeMillis()));
     }
 
 }
