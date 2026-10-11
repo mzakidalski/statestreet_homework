@@ -5,4 +5,4 @@ spring:
     defer-datasource-initialization: true
 
   nlp:
-    repository-type: REGEX
+    repository-type: STANFORD_NLP_AND_REGEX

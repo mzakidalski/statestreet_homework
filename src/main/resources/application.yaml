@@ -18,5 +18,5 @@ spring:
       path: /h2-console
 
   nlp:
-    repository-type: REGEX
+    repository-type: STANFORD_NLP_AND_REGEX
 

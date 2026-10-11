@@ -3,6 +3,7 @@ package com.statestreet.carreservation.service.nlp;
 import com.statestreet.carreservation.repository.nlp.NlpRepository;
 import com.statestreet.carreservation.repository.nlp.NlpRepositoryType;
 import com.statestreet.carreservation.repository.nlp.impl.HardcodedNlpRepository;
+import com.statestreet.carreservation.repository.nlp.impl.StanfordNlpAndRegexRepository;
 import com.statestreet.carreservation.service.nlp.impl.NlpReservationServiceImpl;
 import com.statestreet.carreservation.service.reservation.ReservationService;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +19,8 @@ public class NlpReservationServiceFactory {
 
     public NlpRepository createRepository(NlpRepositoryType type) {
         return switch (type) {
-            case REGEX, STANFORD_NLP_AND_REGEX, LLM -> new HardcodedNlpRepository();
+            case STANFORD_NLP_AND_REGEX -> new StanfordNlpAndRegexRepository();
+            case REGEX, LLM -> new HardcodedNlpRepository();
         };
     }
 

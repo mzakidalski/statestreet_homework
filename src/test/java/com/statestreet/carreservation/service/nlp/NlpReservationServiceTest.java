@@ -38,7 +38,7 @@ class NlpReservationServiceTest {
         );
     }
 
-    @Disabled("NLP parsing is not implemented yet; the repository returns hardcoded data")
+    //@Disabled("NLP parsing is not implemented yet; the repository returns hardcoded data")
     @ParameterizedTest
     @MethodSource("reservationRequests")
     void passesParsedParametersToReservationService(String text, CarType expectedType,
