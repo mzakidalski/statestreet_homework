@@ -5,6 +5,7 @@ import com.statestreet.carreservation.controller.user.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -13,4 +14,6 @@ public class NlpReservationDto {
     private int id;
     private CarDto car;
     private UserDto user;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 }

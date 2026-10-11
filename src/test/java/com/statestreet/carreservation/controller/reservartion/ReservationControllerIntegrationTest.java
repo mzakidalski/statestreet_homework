@@ -1,5 +1,6 @@
 package com.statestreet.carreservation.controller.reservartion;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.statestreet.carreservation.repository.common.CarType;
 import com.statestreet.carreservation.repository.reservation.ReservationRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -47,6 +48,29 @@ class ReservationControllerIntegrationTest {
         ReservationDto madeReservation = reservationResponse.getBody();
 
         assertDatabaseReservationMatchesRequest(madeReservation, request);
+    }
+
+    @Test
+    void listReservationsIncludesStartAndEndTimes() {
+        var request = new ReservatioRequestDto(1, CarType.SEDAN, startDate, 3);
+        var created = restTemplate.postForEntity(URL, request, ReservationDto.class, Map.of("port", port));
+        assertThat(created.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(created.getBody()).isNotNull();
+
+        var response = restTemplate.getForEntity(URL + "/user/1", JsonNode.class, Map.of("port", port));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        var content = response.getBody().get("content");
+        assertThat(content.size()).isEqualTo(2);
+        var reservation = content.get(0);
+        assertThat(reservation.get("id").asInt()).isEqualTo(created.getBody().getId());
+        assertThat(LocalDateTime.parse(reservation.get("startTime").asText())).isEqualTo(startDate);
+        assertThat(LocalDateTime.parse(reservation.get("endTime").asText())).isEqualTo(startDate.plusDays(3));
+        for (JsonNode entry : content) {
+            var stored = reservationRepository.findById(entry.get("id").asInt()).orElseThrow();
+            assertThat(LocalDateTime.parse(entry.get("startTime").asText())).isEqualTo(stored.getStartTime());
+            assertThat(LocalDateTime.parse(entry.get("endTime").asText())).isEqualTo(stored.getEndTime());
+        }
     }
 
     @Test
@@ -98,6 +122,9 @@ class ReservationControllerIntegrationTest {
     }
 
     private void assertDatabaseReservationMatchesRequest(ReservationDto madeReservation, ReservatioRequestDto request) {
+        assertThat(madeReservation).isNotNull();
+        assertThat(madeReservation.getStartTime()).isEqualTo(request.getStartTime());
+        assertThat(madeReservation.getEndTime()).isEqualTo(request.getStartTime().plusDays(request.numOfDays));
         var reservationInDb = reservationRepository.findById(madeReservation.getId()).get();
 
         assertThat(reservationInDb.getUser().getId()).isEqualTo(request.getUserId());

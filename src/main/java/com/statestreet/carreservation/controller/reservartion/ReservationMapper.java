@@ -20,6 +20,7 @@ public class ReservationMapper {
     ReservationDto toDto(Reservation reservation) {
         CarDto carDto = carMapper.toDto(reservation.getCar());
         UserDto userDto = userMapper.toDto(reservation.getUser());
-        return new ReservationDto(reservation.getId(), carDto, userDto);
+        return new ReservationDto(reservation.getId(), carDto, userDto,
+                reservation.getStartTime(), reservation.getEndTime());
     }
 }

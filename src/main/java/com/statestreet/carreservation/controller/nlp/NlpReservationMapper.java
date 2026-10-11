@@ -17,6 +17,6 @@ public class NlpReservationMapper {
 
     public NlpReservationDto toDto(Reservation reservation) {
         return new NlpReservationDto(reservation.getId(), carMapper.toDto(reservation.getCar()),
-                userMapper.toDto(reservation.getUser()));
+                userMapper.toDto(reservation.getUser()), reservation.getStartTime(), reservation.getEndTime());
     }
 }
