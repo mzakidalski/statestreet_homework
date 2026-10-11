@@ -30,8 +30,10 @@ public class NlpReservationServiceImpl implements NlpReservationService {
         if (parsed.startTime() == null) {
             validationErrors.add(LACK_OF_RESERVATION_START_DATE);
         }
-        if (parsed.numOfDays() == null || parsed.numOfDays() <= 0) {
-            validationErrors.add(LACK_OF_RESERVATION_DURATION);
+        if (parsed.endTime() == null) {
+            validationErrors.add(LACK_OF_RESERVATION_END_DATE);
+        } else if (parsed.startTime() != null && !parsed.endTime().isAfter(parsed.startTime())) {
+            validationErrors.add(INVALID_RESERVATION_PERIOD);
         }
         if (!validationErrors.isEmpty()) {
             throw new NlpReservationServiceException(String.join("; ", validationErrors));
@@ -39,7 +41,7 @@ public class NlpReservationServiceImpl implements NlpReservationService {
 
         try {
             return reservationService.makeReservation(userId, parsed.carType(), parsed.startTime(),
-                    parsed.startTime().plusDays(parsed.numOfDays()));
+                    parsed.endTime());
         } catch (RuntimeException ex) {
             throw new NlpReservationServiceException(ex.getMessage(), ex);
         }

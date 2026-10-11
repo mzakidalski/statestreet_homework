@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 public class HardcodedNlpRepository implements NlpRepository {
     @Override
     public NlpReservation parse(String text) {
-        return new NlpReservation(CarType.SUV, LocalDateTime.of(2026, 10, 15, 10, 0), 3);
+        return new NlpReservation(CarType.SUV,
+                LocalDateTime.of(2026, 10, 15, 10, 0),
+                LocalDateTime.of(2026, 10, 18, 10, 0));
     }
 }

@@ -21,31 +21,33 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static com.statestreet.carreservation.service.nlp.NlpReservationService.LACK_OF_CAR_TYPE;
 import static com.statestreet.carreservation.service.nlp.NlpReservationService.LACK_OF_RESERVATION_START_DATE;
-import static com.statestreet.carreservation.service.nlp.NlpReservationService.LACK_OF_RESERVATION_DURATION;
+import static com.statestreet.carreservation.service.nlp.NlpReservationService.LACK_OF_RESERVATION_END_DATE;
+import static com.statestreet.carreservation.service.nlp.NlpReservationService.INVALID_RESERVATION_PERIOD;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class NlpReservationServiceFlowTest {
     private static final LocalDateTime START = LocalDateTime.of(2026, 10, 15, 10, 0);
+    private static final LocalDateTime END = LocalDateTime.of(2026, 10, 18, 10, 0);
 
     static Stream<Arguments> missingParameters() {
         return Stream.of(
-                Arguments.of(new NlpReservation(null, START, 3), List.of(LACK_OF_CAR_TYPE)),
-                Arguments.of(new NlpReservation(CarType.SUV, null, 3), List.of(LACK_OF_RESERVATION_START_DATE)),
-                Arguments.of(new NlpReservation(CarType.SUV, START, null), List.of(LACK_OF_RESERVATION_DURATION)),
-                Arguments.of(new NlpReservation(CarType.SUV, START, 0), List.of(LACK_OF_RESERVATION_DURATION)),
-                Arguments.of(new NlpReservation(CarType.SUV, START, -1), List.of(LACK_OF_RESERVATION_DURATION)),
-                Arguments.of(new NlpReservation(null, null, 3),
+                Arguments.of(new NlpReservation(null, START, END), List.of(LACK_OF_CAR_TYPE)),
+                Arguments.of(new NlpReservation(CarType.SUV, null, END), List.of(LACK_OF_RESERVATION_START_DATE)),
+                Arguments.of(new NlpReservation(CarType.SUV, START, null), List.of(LACK_OF_RESERVATION_END_DATE)),
+                Arguments.of(new NlpReservation(CarType.SUV, START, START), List.of(INVALID_RESERVATION_PERIOD)),
+                Arguments.of(new NlpReservation(CarType.SUV, START, START.minusDays(1)), List.of(INVALID_RESERVATION_PERIOD)),
+                Arguments.of(new NlpReservation(null, null, END),
                         List.of(LACK_OF_CAR_TYPE, LACK_OF_RESERVATION_START_DATE)),
                 Arguments.of(new NlpReservation(null, START, null),
-                        List.of(LACK_OF_CAR_TYPE, LACK_OF_RESERVATION_DURATION)),
-                Arguments.of(new NlpReservation(CarType.SUV, null, 0),
-                        List.of(LACK_OF_RESERVATION_START_DATE, LACK_OF_RESERVATION_DURATION)),
+                        List.of(LACK_OF_CAR_TYPE, LACK_OF_RESERVATION_END_DATE)),
+                Arguments.of(new NlpReservation(CarType.SUV, null, null),
+                        List.of(LACK_OF_RESERVATION_START_DATE, LACK_OF_RESERVATION_END_DATE)),
                 Arguments.of(new NlpReservation(null, null, null),
-                        List.of(LACK_OF_CAR_TYPE, LACK_OF_RESERVATION_START_DATE, LACK_OF_RESERVATION_DURATION)),
-                Arguments.of(new NlpReservation(null, null, -1),
-                        List.of(LACK_OF_CAR_TYPE, LACK_OF_RESERVATION_START_DATE, LACK_OF_RESERVATION_DURATION))
+                        List.of(LACK_OF_CAR_TYPE, LACK_OF_RESERVATION_START_DATE, LACK_OF_RESERVATION_END_DATE)),
+                Arguments.of(new NlpReservation(null, START, START.minusDays(1)),
+                        List.of(LACK_OF_CAR_TYPE, INVALID_RESERVATION_PERIOD))
         );
     }
 
@@ -64,6 +66,19 @@ class NlpReservationServiceFlowTest {
     }
 
     @Test
+    void passesProvidedEndTimeToReservationService() {
+        var repository = mock(NlpRepository.class);
+        var reservations = mock(ReservationService.class);
+        var endTime = START.plusHours(5).plusMinutes(30);
+        when(repository.parse("text")).thenReturn(new NlpReservation(CarType.SUV, START, endTime));
+        var service = new NlpReservationServiceImpl(repository, reservations);
+
+        service.makeReservation(1, "text");
+
+        verify(reservations).makeReservation(1, CarType.SUV, START, endTime);
+    }
+
+    @Test
     void wrapsReservationServiceException() {
         var reservations = mock(ReservationService.class);
         var cause = new UserNotFoundException(100);
@@ -75,8 +90,8 @@ class NlpReservationServiceFlowTest {
     }
 
     @ParameterizedTest
-    @EnumSource(NlpRepositoryType.class)
-    void usesHardcodedRepositoryForEveryStrategy(NlpRepositoryType type) {
+    @EnumSource(value = NlpRepositoryType.class, names = {"REGEX", "LLM"})
+    void usesHardcodedRepositoryForPlaceholderStrategies(NlpRepositoryType type) {
         var factory = new NlpReservationServiceFactory();
         var reservations = mock(ReservationService.class);
         var service = factory.create(type, reservations);
@@ -86,6 +101,6 @@ class NlpReservationServiceFlowTest {
 
         service.makeReservation(1, "text");
 
-        verify(reservations).makeReservation(1, CarType.SUV, START, START.plusDays(3));
+        verify(reservations).makeReservation(1, CarType.SUV, START, END);
     }
 }
