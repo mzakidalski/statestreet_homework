@@ -26,15 +26,19 @@ class NlpReservationServiceTest {
 
     static Stream<Arguments> reservationRequests() {
         return Stream.of(
+                Arguments.of("Reserve an SUV from 22 October 2039 at 10:00 am to 25 October 2039 at 3:00 pm",
+                        CarType.SUV,
+                        LocalDateTime.of(2039, 10, 22, 10, 0),
+                        LocalDateTime.of(2039, 10, 25, 15, 0)),
                 Arguments.of("Reserve an SUV from 15 October 2026 at 10:00 for 3 days",
                         CarType.SUV,
                         LocalDateTime.of(2026, 10, 15, 10, 0),
                         LocalDateTime.of(2026, 10, 18, 10, 0)),
-                Arguments.of("Reserve a sedan from 20 Oct 2026 at 09:00 for 2 days",
+                Arguments.of("Reserve a sedan from 20 Oct 2026 at 09:00am for 2 days",
                         CarType.SEDAN,
                         LocalDateTime.of(2026, 10, 20, 9, 0),
                         LocalDateTime.of(2026, 10, 22, 9, 0)),
-                Arguments.of("van from 1 Nov, 2026 at 12:00 for 5 days",
+                Arguments.of("van from 1 Nov, 2026 at noon for 5 days",
                         CarType.VAN,
                         LocalDateTime.of(2026, 11, 1, 12, 0),
                         LocalDateTime.of(2026, 11, 6, 12, 0)),
