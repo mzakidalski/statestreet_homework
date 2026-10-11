@@ -1,5 +1,6 @@
 package com.statestreet.carreservation.service.nlp.impl;
 
+import com.statestreet.carreservation.repository.nlp.NlpReservation;
 import com.statestreet.carreservation.service.nlp.NlpReservationService;
 import com.statestreet.carreservation.service.nlp.NlpReservationServiceException;
 
@@ -21,7 +22,7 @@ public class NlpReservationServiceImpl implements NlpReservationService {
 
     @Override
     public Reservation makeReservation(int userId, String text) {
-        var parsed = repository.parse(text);
+        NlpReservation parsed = repository.parse(text);
         List<String> validationErrors = new ArrayList<>();
         if (parsed.carType() == null) {
             validationErrors.add(LACK_OF_CAR_TYPE);
