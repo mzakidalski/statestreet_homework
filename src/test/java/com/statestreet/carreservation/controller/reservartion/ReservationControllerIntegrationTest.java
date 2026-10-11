@@ -69,7 +69,7 @@ class ReservationControllerIntegrationTest {
 
         ReservatioRequestDto otherFailRequest = new ReservatioRequestDto(1, CarType.SEDAN, startDate.minusDays(5),
                 numOfDays);
-        var otherFailResponse = restTemplate.postForEntity(URL, request, ReservationDto.class,
+        var otherFailResponse = restTemplate.postForEntity(URL, otherFailRequest, ReservationDto.class,
                 Map.of("port", port));
         assertThat(otherFailResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
