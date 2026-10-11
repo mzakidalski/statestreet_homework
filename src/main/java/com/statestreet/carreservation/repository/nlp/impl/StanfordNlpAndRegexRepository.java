@@ -9,6 +9,8 @@ import edu.stanford.nlp.time.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.temporal.TemporalAmount;
 import java.util.*;
 
 public class StanfordNlpAndRegexRepository implements NlpRepository {
@@ -32,7 +34,7 @@ public class StanfordNlpAndRegexRepository implements NlpRepository {
     private record ParseResult(boolean error,
                                List<CarType> carTypes,
                                List<LocalDateTime> datesParsed,
-                               List<Duration> durationParsed) {};
+                               List<TemporalAmount> durationParsed) {};
 
     public StanfordNlpAndRegexRepository() {
         Properties props = createProperties();
@@ -90,7 +92,7 @@ public class StanfordNlpAndRegexRepository implements NlpRepository {
     private ParseResult parseText(List<CoreEntityMention> mentions) {
         var carTypes = new ArrayList<CarType>();
         var datesParsed = new ArrayList<LocalDateTime>();
-        var durationParsed = new ArrayList<Duration>();
+        var durationParsed = new ArrayList<TemporalAmount>();
         var timeEntriesIds = new HashSet<String>();
         var error = false;
 
@@ -119,7 +121,7 @@ public class StanfordNlpAndRegexRepository implements NlpRepository {
     private boolean parseTimeRelatedMentions(Timex mentionAsTimeType,
                                           Set<String> timeEntriesIds,
                                           List<LocalDateTime> datesParsed,
-                                          List<Duration> durationParsed) {
+                                          List<TemporalAmount> durationParsed) {
 
         String value = mentionAsTimeType.value();
         if (value == null || value.isBlank()) {
@@ -136,11 +138,18 @@ public class StanfordNlpAndRegexRepository implements NlpRepository {
                 datesParsed.add(LocalDateTime.parse(value));
             }
             case "DURATION" -> {
-                Duration duration = Duration.parse(value);
-                if (duration.isZero() || duration.isNegative()) {
-                   return true;
-                } else {
+                if (value.contains("T")) {
+                    Duration duration = Duration.parse(value);
+                    if (duration.isZero() || duration.isNegative()) {
+                        return true;
+                    }
                     durationParsed.add(duration);
+                } else {
+                    Period period = Period.parse(value);
+                    if (period.isZero() || period.isNegative()) {
+                        return true;
+                    }
+                    durationParsed.add(period);
                 }
             }
             default -> {
