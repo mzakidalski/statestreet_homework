@@ -18,7 +18,7 @@ spring:
       path: /h2-console
 
   nlp:
-    repository-type: LLM
+    repository-type: STANFORD_NLP_AND_REGEX
 
   ai:
     openai:
