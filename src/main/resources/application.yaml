@@ -18,5 +18,15 @@ spring:
       path: /h2-console
 
   nlp:
-    repository-type: STANFORD_NLP_AND_REGEX
+    repository-type: LLM
+
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4.1-mini
+          temperature: 0
+          response-format:
+            type: JSON_OBJECT
 

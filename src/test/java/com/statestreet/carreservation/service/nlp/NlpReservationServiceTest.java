@@ -6,8 +6,6 @@ import com.statestreet.carreservation.service.reservation.ReservationService;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,10 +17,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static com.statestreet.carreservation.repository.nlp.impl.StanfordNlpAndRegexRepository.*;
 
-@SpringBootTest
 class NlpReservationServiceTest {
-    @Value("${spring.nlp.repository-type}")
-    private NlpRepositoryType repositoryType;
+    private final NlpRepositoryType repositoryType = NlpRepositoryType.STANFORD_NLP_AND_REGEX;
 
     static Stream<Arguments> reservationRequests() {
         return Stream.of(

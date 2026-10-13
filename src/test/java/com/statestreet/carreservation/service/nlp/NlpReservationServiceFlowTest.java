@@ -90,7 +90,7 @@ class NlpReservationServiceFlowTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = NlpRepositoryType.class, names = {"REGEX", "LLM"})
+    @EnumSource(value = NlpRepositoryType.class, names = {"REGEX"})
     void usesHardcodedRepositoryForPlaceholderStrategies(NlpRepositoryType type) {
         var factory = new NlpReservationServiceFactory();
         var reservations = mock(ReservationService.class);
