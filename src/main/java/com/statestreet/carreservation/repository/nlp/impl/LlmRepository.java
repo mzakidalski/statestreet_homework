@@ -16,9 +16,12 @@ import java.util.List;
 
 public class LlmRepository implements NlpRepository {
 
-    public static final String PARSING_ERROR = "Invalid car reservation request";
-    private final SystemMessage systemMessage = new SystemMessage(new ClassPathResource("prompts/car_reservation_system.prompt"));
+    public record LlmReservationResponse(Boolean error, CarType carType,
+                                         LocalDateTime startDate, LocalDateTime endDate) { }
 
+    public static final String PARSING_ERROR = "Invalid car reservation request";
+
+    private final SystemMessage systemMessage = new SystemMessage(new ClassPathResource("prompts/car_reservation_system.prompt"));
     private final ChatModel chatModel;
 
     private final BeanOutputConverter<LlmReservationResponse> converter =
@@ -37,9 +40,7 @@ public class LlmRepository implements NlpRepository {
             var response = chatModel.call(new Prompt(List.of(
                     systemMessage, new UserMessage(text))));
             var parsed = converter.convert(response.getResult().getOutput().getText());
-            if (parsed == null || !Boolean.FALSE.equals(parsed.error()) || parsed.carType() == null
-                    || parsed.startDate() == null || parsed.endDate() == null
-                    || !parsed.endDate().isAfter(parsed.startDate())) {
+            if (isInvalid(parsed)) {
                 throw new NlpReservationServiceException(PARSING_ERROR);
             }
             return new NlpReservation(parsed.carType(), parsed.startDate(), parsed.endDate());
@@ -50,6 +51,10 @@ public class LlmRepository implements NlpRepository {
         }
     }
 
-    public record LlmReservationResponse(Boolean error, CarType carType,
-                                         LocalDateTime startDate, LocalDateTime endDate) { }
+    private static boolean isInvalid(LlmReservationResponse parsed) {
+        return parsed == null || !Boolean.FALSE.equals(parsed.error()) || parsed.carType() == null
+                || parsed.startDate() == null || parsed.endDate() == null
+                || !parsed.endDate().isAfter(parsed.startDate());
+    }
+
 }
