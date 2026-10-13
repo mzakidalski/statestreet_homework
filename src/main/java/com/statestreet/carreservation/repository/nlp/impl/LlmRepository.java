@@ -52,9 +52,12 @@ public class LlmRepository implements NlpRepository {
     }
 
     private static boolean isInvalid(LlmReservationResponse parsed) {
-        return parsed == null || !Boolean.FALSE.equals(parsed.error()) || parsed.carType() == null
-                || parsed.startDate() == null || parsed.endDate() == null
-                || !parsed.endDate().isAfter(parsed.startDate());
+        return parsed == null ||
+                !Boolean.FALSE.equals(parsed.error()) ||
+                parsed.carType() == null ||
+                parsed.startDate() == null ||
+                parsed.endDate() == null ||
+                !parsed.endDate().isAfter(parsed.startDate());
     }
 
 }
