@@ -22,5 +22,6 @@ number of days - [test link](https://github.com/mzakidalski/statestreet_homework
 - generating stubs of tests / boilerplate code
 - errors troubleshooting
 - asking for specific features of Spring (e.g. JPQL)
+- stub for using Stanford NLP library and LLM
 
 
